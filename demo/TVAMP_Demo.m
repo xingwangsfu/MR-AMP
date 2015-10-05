@@ -40,11 +40,7 @@ for i = 1:length(delta_cand)
             Psi = @(x) Psi*x;
         end
         Y = Psi(X_vec);
-<<<<<<< HEAD
-=======
-        
->>>>>>> 8a5ce191508ec9d6ef006551bb48c5d4dc5be5db
-        
+
         Mode = 'TV'; % For HR image reconstruction, no need to input Mode and scale.
         scale = 1;
         
