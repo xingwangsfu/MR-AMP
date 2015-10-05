@@ -22,7 +22,7 @@ for i = 1:size(Up_matrix,2)
     Up_matrix((i-1)*factor+1:i*factor,i) = 1;
 end
 %Generate State Evolution and compute intermediate MSEs of D-AMP and D-IT
-scale = 2;
+scale = 2.68;
 True_AMP_MSE_array=zeros(N,iters);
 True_DIT_MSE_array=zeros(N,iters);
 Predicted_MSE_array=zeros(N,iters);
@@ -65,8 +65,8 @@ for i=1:N
         True_AMP_MSE_array(i,iter)=mean((x_0(:)-x_tplus1(:)).^2);
        [ Predicted_MSE_array(i,iter) ] = TVAMP_SE_Prediction( x_0(:), Predicted_MSE_array(i,iter-1), m,n,noise_sig, factor,Mode,scale);
        
-        factor = 2; % for HR recovery
-        scale = 2.68; % for HR recovery
+        factor = 2; % for LR recovery
+        scale = 2.68; % for LR recovery
         [x_LR_tplus1,z_LR_tplus1,pseudo_data] = TVAMP_oneIter(y,x_LR_t,z_LR_t,A_LR,AT_LR,imsize/factor,imsize/factor,n/factor^2,factor,Mode,scale);
         z_LR_t=z_LR_tplus1; x_LR_t=x_LR_tplus1;
         True_AMP_MSE_array_LR(i,iter)=mean((x_LR_0(:)-x_LR_tplus1(:)/scale).^2);
