@@ -1,0 +1,9 @@
+function mu = etafunc_AMP_ver2(normpdf_matrix,theta_plus_B,C,F,q,Z)
+
+
+mu=   ( (1-q)^2  .* C(:,1) .*F(:,1) ./ theta_plus_B(:,1) .*  normpdf_matrix(:,1) +...
+        q*(1-q)  .* C(:,2) .*F(:,2) ./ theta_plus_B(:,2) .*  normpdf_matrix(:,2) +...
+        q*(1-q)  .* C(:,3) .*F(:,3) ./ theta_plus_B(:,3) .*  normpdf_matrix(:,3) +...
+        q^2      .* C(:,4) .*F(:,4) ./ theta_plus_B(:,4) .*  normpdf_matrix(:,4)  )./Z;
+
+end

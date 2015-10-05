@@ -1,0 +1,68 @@
+Original release date : 8/7/14
+Reference             : "From Denoising to Compressed Sensing", submitted to IEEE Trans. Info. Theory
+Authors               : Christopher A. Metzler, Arian Maleki, Richard G. Baraniuk
+Download              : http://arxiv.org/abs/1406.4175
+
+Questions/suggestions/comments: chris.metzler@rice.edu
+
+Contents
+---------------------------------------------------------------------------
+scripts:
+    CS_1D_Demo.m: Recover a compressively sampled 1D signal with Haar wavelet sparsity based AMP and NLM-AMP.
+    CS_Imaging_Demo.m: Recover compressively sampled image using D-AMP.
+    QQplotGenerator.m: Generate a series of QQplots of the effective noise of D-IT and D-AMP.
+    StateEvolutionGenerator.m: Compute the state evolution of a D-AMP algorithm and compare it to the true MSEs of D-AMP and D-IT.
+
+functions:
+    AMP.m: Reconstructs sparse, compressively sampled signals.
+    DAMP.m: Performs D-AMP reconstruction of a compressively sampled signal. The string "denoiser" selects which denoiser to use.
+    DIT.m: Performs D-IT reconstruction of a compressively sampled signal. The string "denoiser" selects which denoiser to use.
+    DAMP_oneIter.m: Performs a single iteration of D-AMP.  Used to generate state evolution and qqplots.
+    DIT_oneIter.m: Performs a single iteration of D-IT.  Used to generate state evolution and qqplots.
+    DAMP_SE_Prediction.m: Computes the next predicted state evolution of a D-AMP algorithm.
+    denoise.m: Denoises an incoming signal.  Which denoiser is used depends on the string "denoiser".  Currently supports Gaussian filtering, bilateral filtering, NLM, BLS-GSM, BM3D, and BM3D-SAPCA.  Add your own denoising algorithms here.
+
+auxillary functions:
+    phi_fp.m: Projects a length n signal to m measurments using a gaussian random matrix. Can handle very large measurement matrices but is very slow.
+    phit_fp.m: Projects a length m signal onto the transpose of an mxn gaussian measurment matrix. Can handle very large measurement matrices but is very slow.
+    psi_fp.m: Transforms wavelet coefficients into the pixel domain.
+    psit_fp.m: Transforms pixels to their wavelet coefficients.
+    PSNR.m: Computes the PSNR of an image x and its estimate x_hat.
+
+Other files:
+    OptimumLambdaSigned.mat: Look up table to set the threshold for AMP.
+    TestImages: Images are from Javier Portilla's dataset: http://decsai.ugr.es/~javier/denoise/test_images/index.htm
+
+Packages
+---------------------------------------------------------------------------
+This download includes the BM3D, BLS-GSM, NLM, and Rice Wavelet Toolbox packages.
+The latest versions of these packages can be found at:
+    BM3D: http://www.cs.tut.fi/~foi/GCF-BM3D/
+    BLS-GSM: http://decsai.ugr.es/~javier/denoise/software/index.htm
+    NLM: http://www.mathworks.com/matlabcentral/fileexchange/27395-fast-non-local-means-1d--2d-color-and-3d
+    Rice Wavelet Toolbox (rwt): https://github.com/ricedsp/rwt
+
+Installation
+---------------------------------------------------------------------------
+To install this package first setup your compiler with "mex -setup".
+Next compile the NLM utilities by typing "mex image2vectors_double.c", "mex image2vectors_single.c", "mex vectors_nlmeans_double.c", and "mex vectors_nlmeans_single.c" from the Packages/NLM/ directory. 
+Next compile the Rice Wavelet Toolbox (rwt) by entering "compile" from the Packages/rwt/bin/ directory. Currently the RWT does not compile under Windows 64 bit Matlab.
+You will  need Matlab's stat toolbox for qqplots.
+
+
+Example
+---------------------------------------------------------------------------
+Use BM3D-AMP to recover a signal a 128x128 image x_0 sampled according to y=M*x_0 where M is an m by n Guassian measurement matrix with unit norm columns:
+    x_hat=DAMP(y,30,128,128,'BM3D',M);
+
+
+Modifying Code
+---------------------------------------------------------------------------
+Our code was designed to make it as easy as possible to test D-AMP with a  new denoiser.
+To test another denoiser in the D-AMP algorithm simple add an additional case statement to denoise.m and place your denoising function there.  (Your denoiser will have access to the noisy signal as well as an estimate of the standard deviation of the noise).
+Next change the "denoiser" argument to any calls to DAMP, DIT, DAMP_oneIter, etc. to the name used in your case statement. e.g: x_hat=DAMP(y,30,128,128,'mydenosier',M);
+
+Issues
+---------------------------------------------------------------------------
+The latest version of the Rice Wavelet Toolbox (RWT) does not compile under Windows 64 bit Matlab. Older versions of the RWT often crash. 
+At this point in time functions and scripts which use the RWT (CS_1D_Demo and the BLS-GSM denoiser) must be run on a Unix machine.  BM3D-AMP and other D-AMP algorithms work with Windows and Unix.
