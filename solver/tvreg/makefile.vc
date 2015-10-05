@@ -1,0 +1,75 @@
+# MSVC makefile for tvreg v2
+# Pascal Getreuer
+# December 15, 2010
+
+
+#
+# FFTW3 is required to build tvreg.  Windows DLLs are available at
+#    http://www.fftw.org/install/windows.html
+# Please see the tvreg documentation for step by step instructions
+# for compiling tvreg with MSVC.
+#
+# Please specify the locations of fftw3.h and the FFTW libs
+#
+FFTW_DIR     = "D:/libs/fftw"
+FFTW_INCLUDE = -I$(FFTW_DIR)
+FFTW_LIB     = $(FFTW_DIR)/libfftw3-3.lib $(FFTW_DIR)/libfftw3f-3.lib
+
+# Uncomment and edit the following lines for JPEG support.
+#LIBJPEG_DIR     = "D:/libs/jpeg-8b"
+#LIBJPEG_INCLUDE = -I$(LIBJPEG_DIR)
+#LIBJPEG_LIB     = $(LIBJPEG_DIR)/libjpeg.lib
+
+# Uncomment and edit the following lines for PNG support.
+#ZLIB_DIR     = "D:/libs/zlib"
+#ZLIB_INCLUDE = -I$(ZLIB_DIR)
+#ZLIB_LIB     = $(ZLIB_DIR)/zlib.lib
+#LIBPNG_DIR     = "D:/libs/lpng143"
+#LIBPNG_INCLUDE = -I$(LIBPNG_DIR)
+#LIBPNG_LIB     = $(LIBPNG_DIR)/libpng.lib
+
+# Uncomment this line to perform computations in single precision
+# instead of double precision.
+#NUM_SINGLE = -DNUM_SINGLE
+
+
+##
+# Standard make settings
+CFLAGS=-O2 -W3 \
+	-D_CRT_SECURE_NO_WARNINGS \
+	$(FFTW_INCLUDE) $(LIBJPEG_INCLUDE) $(LIBPNG_INCLUDE) $(ZLIB_INCLUDE)
+LDFLAGS=-NODEFAULTLIB:libcmtd -NODEFAULTLIB:msvcrt \
+	$(LIBJPEG_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FFTW_LIB)
+
+TVRESTORE_SOURCES=tvrestorecli.c tvreg.c cliio.c imageio.c
+CHANVESE_SOURCES=chanvesecli.c chanvese.c cliio.c imageio.c
+
+##
+# These statements add compiler flags to define LIBJPEG_SUPPORT, etc.,
+# depending on which libraries have been specified above.
+!IFDEF LIBJPEG_LIB
+CJPEG=-DLIBJPEG_SUPPORT
+!ENDIF
+
+!IFDEF LIBPNG_LIB
+CPNG=-DLIBPNG_SUPPORT
+!ENDIF
+
+ALLCFLAGS=$(NUM_SINGLE) $(CFLAGS) $(CJPEG) $(CPNG)
+TVRESTORE_OBJECTS=$(TVRESTORE_SOURCES:.c=.obj)
+CHANVESE_OBJECTS=$(CHANVESE_SOURCES:.c=.obj)
+
+all: tvrestore.exe chanvese.exe
+
+tvrestore.exe: $(TVRESTORE_OBJECTS)
+	link $(LDFLAGS) $(TVRESTORE_OBJECTS) -out:$@
+
+chanvese.exe: $(CHANVESE_OBJECTS)
+	link $(LDFLAGS) $(CHANVESE_OBJECTS) -out:$@
+
+.c.obj:
+	$(CC) -c $(ALLCFLAGS) -Tc $<
+
+clean:
+	del -f -q $(TVRESTORE_OBJECTS) $(CHANVESE_OBJECTS) \
+	tvrestore.exe chanvese.exe

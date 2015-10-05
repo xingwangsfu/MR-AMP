@@ -1,0 +1,61 @@
+# GCC makefile for tvreg v2
+# Pascal Getreuer
+# December 15, 2010
+
+# The FFTW3 library (http://www.fftw.org) is required.
+# Set the flags needed for linking.
+LDFFTW3=-lfftw3 -lfftw3f
+
+# The following three statements determine the build configuration.
+# For handling different image formats, the program can be linked with
+# the libjpeg, libpng, and libtiff libraries.  For each library, set
+# the flags needed for linking.  To disable use of a library, comment
+# its statement.  You can disable all three (BMP is always supported).
+LDLIBJPEG=-ljpeg
+LDLIBPNG=-lpng
+LDLIBTIFF=-ltiff
+
+# Uncomment this line to perform computations in single precision
+# instead of double precision.
+#NUM_SINGLE=-DNUM_SINGLE
+
+##
+# Standard make settings
+CFLAGS=-O2 -ansi -pedantic -Wall -Wextra
+LDFLAGS=-lm $(LDFFTW3) $(LDLIBJPEG) $(LDLIBPNG) $(LDLIBTIFF)
+#CC=gcc
+
+TVRESTORE_SOURCES=tvrestorecli.c tvreg.c cliio.c imageio.c
+CHANVESE_SOURCES=chanvesecli.c chanvese.c cliio.c imageio.c
+
+## 
+# These statements add compiler flags to define LIBJPEG_SUPPORT, etc.,
+# depending on which libraries have been specified above.  Note that
+# while libjpeg, libpng, and libtiff are optional, FFTW3 is required.
+ifneq ($(LDLIBJPEG),)
+	CJPEG=-DLIBJPEG_SUPPORT
+endif
+ifneq ($(LDLIBPNG),)
+	CPNG=-DLIBPNG_SUPPORT
+endif
+ifneq ($(LDLIBTIFF),)
+	CTIFF=-DLIBTIFF_SUPPORT
+endif
+
+ALLCFLAGS=$(NUM_SINGLE) $(CFLAGS) $(CJPEG) $(CPNG) $(CTIFF)
+TVRESTORE_OBJECTS=$(TVRESTORE_SOURCES:.c=.o)
+CHANVESE_OBJECTS=$(CHANVESE_SOURCES:.c=.o)
+
+all: tvrestore chanvese
+
+tvrestore: $(TVRESTORE_OBJECTS)
+	$(CC) $(LDFLAGS) $(TVRESTORE_OBJECTS) -o $@
+
+chanvese: $(CHANVESE_OBJECTS)
+	$(CC) $(LDFLAGS) $(CHANVESE_OBJECTS) -o $@
+
+.c.o:
+	$(CC) -c $(ALLCFLAGS) $< -o $@
+
+clean:
+	$(RM) $(TVRESTORE_OBJECTS) $(CHANVESE_OBJECTS) tvrestore chanvese
