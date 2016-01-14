@@ -30,22 +30,22 @@ for i = 1:length(delta_cand)
     
     for index = 1:20
         % Measurement matrix Psi
-        Psi = randn(M,N);
-        normalized_vector = sqrt(sum(Psi.*Psi,1));
+        Phi = randn(M,N);
+        normalized_vector = sqrt(sum(Phi.*Phi,1));
         normalized_matrix = repmat(normalized_vector,M,1);
-        Psi = Psi./normalized_matrix;
+        Phi = Phi./normalized_matrix;
         
-        if ~isa(Psi, 'function_handle')
-            Psi_T = @(x) Psi'*x;
-            Psi = @(x) Psi*x;
+        if ~isa(Phi, 'function_handle')
+            Phi_T = @(x) Phi'*x;
+            Phi = @(x) Phi*x;
         end
-        Y = Psi(X_vec);
+        Y = Phi(X_vec);
 
         Mode = 'TV'; % For HR image reconstruction, no need to input Mode and scale.
         scale = 1;
         
         % recover the HR image, the output is recovered HR image
-        [alpha_rec, nmse, mse_true, mse_pred] = TVAMP(Y, Psi, Psi_T, n, n, N,X,1,Mode,scale);
+        [alpha_rec, nmse, mse_true, mse_pred] = TVAMP(Y, Phi, Phi_T, n, n, N,X,1,Mode,scale);
         alpha_H2L = imresize(alpha_rec,1/factor,'bicubic'); % HRL
         x_LR = imresize(X,1/factor,'bicubic'); % reference LR image with bicubicu interpolator
         x_LR_single = X(1:factor:end,1:factor:end); % reference LR image with prolongation operator
@@ -58,8 +58,8 @@ for i = 1:length(delta_cand)
                       %  scale = factor for LR image in "Single" mode
         
         % Construct corresponding new Measurement matrix for LR
-        A_LR = @(alpha)MeasurementMatrix_t2s_LR_v2(alpha,n_LR,n_LR,n,n,Psi,Mode,Up_matrix,scale);
-        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR_v2(y,n_LR,n_LR,n,n,Psi_T,Mode,Up_matrix,scale);
+        A_LR = @(alpha)MeasurementMatrix_t2s_LR_v2(alpha,n_LR,n_LR,n,n,Phi,Mode,Up_matrix,scale);
+        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR_v2(y,n_LR,n_LR,n,n,Phi_T,Mode,Up_matrix,scale);
         [alpha_rec_LR, nmse_LR_tmp, mse_true_LR, mse_pred_LR] = TVAMP(Y, A_LR, AT_LR, n_LR, n_LR, n_LR^2,x_LR,factor,Mode,scale);
         if strcmp(Mode,'Single')
             PSNR_LR(i,index) =  20*log10(255/sqrt(norm(alpha_rec_LR(:)/(factor)-x_LR(:))^2/(N/factor^2)));
