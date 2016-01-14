@@ -52,23 +52,23 @@ for i = 1:length(delta_cand)
     for index = 1:20
         
         % Generate the measurement matrix
-        Psi = randn(M,N);
-        normalized_vector = sqrt(sum(Psi.*Psi,1));
+        Phi = randn(M,N);
+        normalized_vector = sqrt(sum(Phi.*Phi,1));
         normalized_matrix = repmat(normalized_vector,M,1);
-        Psi = Psi./normalized_matrix;
+        Phi = Phi./normalized_matrix;
         
-        if ~isa(Psi, 'function_handle')
-            Psi_T = @(x) Psi'*x;
-            Psi = @(x) Psi*x;
+        if ~isa(Phi, 'function_handle')
+            Phi_T = @(x) Phi'*x;
+            Phi = @(x) Phi*x;
         end
         
-        Y = Psi(X_vec);
+        Y = Phi(X_vec);
         % Construct corresponding new Measurement matrix for HR and LR
         
-        A = @(alpha)MeasurementMatrix_t2s(alpha,f,L,n,n,Psi,Mode);
-        AT = @(y)MeasurementMatrixTrans_s2t(y,h,L,n,n,Psi_T,Mode);
-        A_LR = @(alpha)MeasurementMatrix_t2s_LR(alpha,f,L,n/factor,n/factor,n,n,Psi,Mode);
-        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR(y,h,L,n/factor,n/factor,n,n,Psi_T,Mode);
+        A = @(alpha)MeasurementMatrix_t2s(alpha,f,L,n,n,Phi,Mode);
+        AT = @(y)MeasurementMatrixTrans_s2t(y,h,L,n,n,Phi_T,Mode);
+        A_LR = @(alpha)MeasurementMatrix_t2s_LR(alpha,f,L,n/factor,n/factor,n,n,Phi,Mode);
+        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR(y,h,L,n/factor,n/factor,n,n,Phi_T,Mode);
         
         
         % recover the HR image, the output is the DCT coefficients for HR
