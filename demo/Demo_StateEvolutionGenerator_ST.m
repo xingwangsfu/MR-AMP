@@ -66,10 +66,10 @@ for i=1:N
     x_HR = idct2(alpha_HR);
     noise_sig_LR = sqrt(mean((y-Psi(x_HR(:))).^2)); % the new noise level: Gaussian noise and LR approximation error
     % DCT or Wavelet
-    A = @(alpha)MeasurementMatrix_t2s(alpha,f,L,imsize,imsize,Psi,Mode);
-    AT = @(y)MeasurementMatrixTrans_s2t(y,h,L,imsize,imsize,Psi_T,Mode);
-    A_LR = @(alpha)MeasurementMatrix_t2s_LR(alpha,f,L,imsize/factor,imsize/factor,imsize,imsize,Psi,Mode);
-    AT_LR = @(y)MeasurementMatrixTrans_s2t_LR(y,h,L,imsize/factor,imsize/factor,imsize,imsize,Psi_T,Mode);
+    A = @(alpha)Psi_t2s(alpha,f,L,imsize,imsize,Psi,Mode);
+    AT = @(y)PsiT_s2t(y,h,L,imsize,imsize,Psi_T,Mode);
+    A_LR = @(alpha)Psi_t2s_LR(alpha,f,L,imsize/factor,imsize/factor,imsize,imsize,Psi,Mode);
+    AT_LR = @(y)PsiT_s2t_LR(y,h,L,imsize/factor,imsize/factor,imsize,imsize,Psi_T,Mode);
     
     for iter=2:iters
         [x_tplus1,z_tplus1,pseudo_data] = AMP_oneIter(y, x_t, z_t, A, AT, n);
@@ -101,6 +101,7 @@ h=figure;
 hold
 errorbar(0:29,Predicted_MSE,Predicted_MSE_std,'-.b');
 errorbar(0:29,True_AMP_MSE,True_AMP_MSE_std,'--g');
+title('HR SE with ST')
 xlabel('Iteration');
 ylabel('MSE');
 
@@ -108,7 +109,7 @@ h=figure;
 hold
 errorbar(0:29,Predicted_MSE_LR,Predicted_MSE_std_LR,'-.b');
 errorbar(0:29,True_AMP_MSE_LR,True_AMP_MSE_std_LR,'--g');
-title([denoiser,'-AMP and ']);
+title('LR SE with ST');
 xlabel('Iteration');
 ylabel('MSE');
 

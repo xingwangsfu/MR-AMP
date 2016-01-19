@@ -53,8 +53,8 @@ for i=1:N
     x_HR = imresize(x_LR_0,factor,'bicubic');
     noise_sig_LR = sqrt(mean((y-Psi(x_HR(:))).^2));
     Mode = 'Higher';
-    A_LR = @(alpha)MeasurementMatrix_t2s_LR_v2(alpha,imsize/factor,imsize/factor,imsize,imsize,Psi,Mode,Up_matrix,scale);
-    AT_LR = @(y)MeasurementMatrixTrans_s2t_LR_v2(y,imsize/factor,imsize/factor,imsize,imsize,Psi_T,Mode,Up_matrix,scale);
+    A_LR = @(alpha)Phi_LR(alpha,imsize/factor,imsize/factor,imsize,imsize,Psi,Mode,Up_matrix,scale);
+    AT_LR = @(y)PhiT_LR(y,imsize/factor,imsize/factor,imsize,imsize,Psi_T,Mode,Up_matrix,scale);
   
 
     for iter=2:iters
@@ -91,6 +91,7 @@ h=figure;
 hold
 errorbar(0:29,Predicted_MSE,Predicted_MSE_std,'-.b');
 errorbar(0:29,True_AMP_MSE,True_AMP_MSE_std,'--g');
+title('HR SE with TV')
 xlabel('Iteration');
 ylabel('MSE');
 
@@ -98,6 +99,7 @@ h=figure;
 hold
 errorbar(0:29,Predicted_MSE_LR,Predicted_MSE_std_LR,'-.b');
 errorbar(0:29,True_AMP_MSE_LR,True_AMP_MSE_std_LR,'--g');
+title('LR SE with TV');
 xlabel('Iteration');
 ylabel('MSE');
 
