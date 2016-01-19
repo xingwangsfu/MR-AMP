@@ -8,4 +8,4 @@ Two different multi-resolution approaches are proposed, i.e., transform domain a
 
 For transform domain approach, please find the demo file "DCT_WT_Demo.m" in the "demo" folder.
 For spatial domain approach, please find the file "TVAMP_Demo.m" in the "demo" folder.
-
+For the comparison between TVAL3 and AMP-TV-2D, please refer to 
