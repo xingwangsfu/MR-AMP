@@ -1,4 +1,4 @@
-function y = MeasurementMatrix_t2s(alpha,f,L,m,n,Psi,mode)
+function y = Psi_t2s(alpha,f,L,m,n,Psi,mode)
 if ~isa(Psi, 'function_handle')
     Psi = @(x) Psi*x;
 end

@@ -58,8 +58,8 @@ for i = 1:length(delta_cand)
                       %  scale = factor for LR image in "Single" mode
         
         % Construct corresponding new Measurement matrix for LR
-        A_LR = @(alpha)MeasurementMatrix_t2s_LR_v2(alpha,n_LR,n_LR,n,n,Phi,Mode,Up_matrix,scale);
-        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR_v2(y,n_LR,n_LR,n,n,Phi_T,Mode,Up_matrix,scale);
+        A_LR = @(alpha)Phi_LR(alpha,n_LR,n_LR,n,n,Phi,Mode,Up_matrix,scale);
+        AT_LR = @(y)PhiT_LR(y,n_LR,n_LR,n,n,Phi_T,Mode,Up_matrix,scale);
         [alpha_rec_LR, nmse_LR_tmp, mse_true_LR, mse_pred_LR] = TVAMP(Y, A_LR, AT_LR, n_LR, n_LR, n_LR^2,x_LR,factor,Mode,scale);
         if strcmp(Mode,'Single')
             PSNR_LR(i,index) =  20*log10(255/sqrt(norm(alpha_rec_LR(:)/(factor)-x_LR(:))^2/(N/factor^2)));

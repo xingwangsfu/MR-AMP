@@ -1,4 +1,4 @@
-function x = MeasurementMatrixTrans_s2t_LR_v2(y,m,n,M,N,Psi_T,mode,Up_matrix, scale)
+function x = PhiT_LR(y,m,n,M,N,Psi_T,mode,Up_matrix, scale)
 
 
 if ~isa(Psi_T, 'function_handle')

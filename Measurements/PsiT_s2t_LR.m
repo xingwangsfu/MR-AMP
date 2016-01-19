@@ -1,4 +1,4 @@
-function alpha_LR = MeasurementMatrixTrans_s2t_LR(y,h,L,m,n,M,N,Psi_T,mode)
+function alpha_LR = PsiT_s2t_LR(y,h,L,m,n,M,N,Psi_T,mode)
 
 if ~isa(Psi_T, 'function_handle')
     Psi_T = @(x) Psi_T*x;

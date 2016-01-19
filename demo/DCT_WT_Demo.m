@@ -65,10 +65,10 @@ for i = 1:length(delta_cand)
         Y = Phi(X_vec);
         % Construct corresponding new Measurement matrix for HR and LR
         
-        A = @(alpha)MeasurementMatrix_t2s(alpha,f,L,n,n,Phi,Mode);
-        AT = @(y)MeasurementMatrixTrans_s2t(y,h,L,n,n,Phi_T,Mode);
-        A_LR = @(alpha)MeasurementMatrix_t2s_LR(alpha,f,L,n/factor,n/factor,n,n,Phi,Mode);
-        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR(y,h,L,n/factor,n/factor,n,n,Phi_T,Mode);
+        A = @(alpha)Psi_t2s(alpha,f,L,n,n,Phi,Mode);
+        AT = @(y)PsiT_s2t(y,h,L,n,n,Phi_T,Mode);
+        A_LR = @(alpha)Psi_t2s_LR(alpha,f,L,n/factor,n/factor,n,n,Phi,Mode);
+        AT_LR = @(y)PsiT_s2t_LR(y,h,L,n/factor,n/factor,n,n,Phi_T,Mode);
         
         
         % recover the HR image, the output is the DCT coefficients for HR
