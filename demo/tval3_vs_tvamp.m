@@ -23,7 +23,7 @@ if mod(factor,1) ==1
 end
 
 
-delta_cand = [0.2]; % undersampling pool
+delta_cand = [0.1]; % undersampling pool
 X_vec = X(:); % vectorize the input image
 for i = 1:length(delta_cand)
     
@@ -62,8 +62,9 @@ for i = 1:length(delta_cand)
         scale = 2.68; % scaling factor for LR image in "Higher" mode, scale=2.68 for factor=2, scale=5 for factor=4
         
         % Construct corresponding new Measurement matrix for LR
-        A_LR = @(alpha)MeasurementMatrix_t2s_LR_v2(alpha,n_LR,n_LR,n,n,Phi,Mode,Up_matrix,scale);
-        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR_v2(y,n_LR,n_LR,n,n,Phi_T,Mode,Up_matrix,scale);
+        
+        A_LR = @(alpha)Phi_LR(alpha,n_LR,n_LR,n,n,Phi,Mode,Up_matrix,scale);
+        AT_LR = @(y)PhiT_LR(y,n_LR,n_LR,n,n,Phi_T,Mode,Up_matrix,scale);
         [alpha_rec_LR, nmse_LR_tmp, mse_true_LR, mse_pred_LR] = TVAMP(Y, A_LR, AT_LR, n_LR, n_LR, n_LR^2,x_LR,factor,Mode,scale);
         if strcmp(Mode,'Single')
             PSNR_LR(i,index) =  20*log10(255/sqrt(norm(alpha_rec_LR(:)/(factor)-x_LR(:))^2/(N/factor^2)));
@@ -81,15 +82,16 @@ for i = 1:length(delta_cand)
         scale = 1; % no measurement matrix scaling for LR-TVAL3
         
         % Construct corresponding new Measurement matrix for LR
-        A_LR = @(alpha)MeasurementMatrix_t2s_LR_v2(alpha,n_LR,n_LR,n,n,Psi,Mode,Up_matrix,scale);
-        AT_LR = @(y)MeasurementMatrixTrans_s2t_LR_v2(y,n_LR,n_LR,n,n,Psi_T,Mode,Up_matrix,scale);
+        
+        A_LR = @(alpha)Phi_LR(alpha,n_LR,n_LR,n,n,Phi,Mode,Up_matrix,scale);
+        AT_LR = @(y)PhiT_LR(y,n_LR,n_LR,n,n,Phi_T,Mode,Up_matrix,scale);
         %  beta_cand = beta_cand(3);
-        parfor params_idx = 1:size(params_cand,1)
+        for params_idx = 1:size(params_cand,1)
             mu = 2^params_cand(params_idx,1);
             beta = 2^params_cand(params_idx,2);
             [estIm, out] = TVAL3(A_LR, AT_LR ,Y,n_LR,n_LR,mu,beta);
             PSNR_LR_TVAL3(index, params_idx) = 20*log10(255/sqrt(norm(estIm(:)/scale-x_LR(:))^2/(N/factor^2)));
-            [estIm, out] = TVAL3(Psi, Psi_T ,Y,n,n,mu,beta);
+            [estIm, out] = TVAL3(Phi, Phi_T ,Y,n,n,mu,beta);
             PSNR_HR_TVAL3(index, params_idx) = 20*log10(255/sqrt(norm(estIm(:)-X(:))^2/(N)));
         end
     end
